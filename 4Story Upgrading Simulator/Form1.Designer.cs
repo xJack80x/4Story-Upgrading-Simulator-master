@@ -85,11 +85,11 @@
             edit4ancientRatesToolStripMenuItem = new ToolStripMenuItem();
             edit4classicRatesToolStripMenuItem = new ToolStripMenuItem();
             editCustomServerRatesToolStripMenuItem = new ToolStripMenuItem();
+            editInventoryToolStripMenuItem = new ToolStripMenuItem();
             label21 = new Label();
             pictureBox28 = new PictureBox();
             pictureBox29 = new PictureBox();
             label22 = new Label();
-            editInventoryToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -819,6 +819,13 @@
             editCustomServerRatesToolStripMenuItem.Text = "Edit Custom server rates";
             editCustomServerRatesToolStripMenuItem.Click += editCustomServerRatesToolStripMenuItem_Click;
             // 
+            // editInventoryToolStripMenuItem
+            // 
+            editInventoryToolStripMenuItem.Name = "editInventoryToolStripMenuItem";
+            editInventoryToolStripMenuItem.Size = new Size(92, 21);
+            editInventoryToolStripMenuItem.Text = "Edit Inventory";
+            editInventoryToolStripMenuItem.Click += editInventoryToolStripMenuItem_Click;
+            // 
             // label21
             // 
             label21.AutoSize = true;
@@ -868,13 +875,6 @@
             label22.Size = new Size(53, 19);
             label22.TabIndex = 55;
             label22.Text = "label22";
-            // 
-            // editInventoryToolStripMenuItem
-            // 
-            editInventoryToolStripMenuItem.Name = "editInventoryToolStripMenuItem";
-            editInventoryToolStripMenuItem.Size = new Size(92, 21);
-            editInventoryToolStripMenuItem.Text = "Edit Inventory";
-            editInventoryToolStripMenuItem.Click += editInventoryToolStripMenuItem_Click;
             // 
             // Form1
             // 
@@ -942,7 +942,7 @@
             Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
             Name = "Form1";
-            Text = "4Story Upgrading Simulator";
+            Text = "4Story Upgrading Simulator v1.0";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();

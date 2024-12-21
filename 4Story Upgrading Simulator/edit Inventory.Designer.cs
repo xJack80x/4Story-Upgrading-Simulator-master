@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(edit_Inventory));
             textBox1 = new TextBox();
             label1 = new Label();
             label2 = new Label();
@@ -207,6 +208,7 @@
             Controls.Add(label1);
             Controls.Add(textBox1);
             FormBorderStyle = FormBorderStyle.Fixed3D;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "edit_Inventory";
             StartPosition = FormStartPosition.CenterParent;

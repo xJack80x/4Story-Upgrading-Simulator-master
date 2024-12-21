@@ -136,8 +136,7 @@ namespace _4Story_Upgrading_Simulator
             SaveRatesToFile();  // Save to file after updating savedRates
 
             Form1.UpdateSuccessChance();
-            DialogResult = DialogResult.OK;
-            this.Close();
+            //DialogResult = DialogResult.OK;
         }
 
         // Method to get the saved rates from outside the form
