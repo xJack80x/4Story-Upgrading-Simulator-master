@@ -506,7 +506,7 @@ namespace _4Story_Upgrading_Simulator
                         break;
                     case 3:
                         if (File.Exists(Directory.GetCurrentDirectory() + @"\sounds\fail.wav"))
-                            up.Play();
+                            fail.Play();
                         break;
                 }
 
