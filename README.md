@@ -1,6 +1,6 @@
 # 4Story-Upgrading-Simulator-master
 
-A simulator for 4Ancient, 4Classic, and the old 4Story Official featuring official upgrade rates from the 4Story source code.
+A simulator for 4Ancient, 4Classic, and the old 4Story Official featuring official algorithms from the 4Story source code.
 
 Features:
 - Real-time success chance calculation
