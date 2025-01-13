@@ -221,7 +221,7 @@ namespace _4Story_Upgrading_Simulator
             else if (pergamena == PERGAMENA_MAESTRO_VAL && upgrade < 24)
             {
 
-                if (bRand < bProb)
+                if (bRand <= bProb)
                 {
                     Random rand2 = new Random();
 
@@ -268,7 +268,7 @@ namespace _4Story_Upgrading_Simulator
                         if (upgrade > bLevelGuard && upgrade - bDownGrade < bLevelGuard)
                             bDownGrade = upgrade - bLevelGuard;
 
-                        upgrade = upgrade - bDownGrade;
+                        upgrade = Math.Max(0, upgrade - bDownGrade);
 
                         if (pictureBox19.Visible == true)
                             balestra = upgrade;
@@ -286,7 +286,7 @@ namespace _4Story_Upgrading_Simulator
                         label9.Text = show_upgrade(2, upgrade, up, bDownGrade);
                         label9.Update();
                     }
-                    else
+                    else if (!tintura)
                     {
                         upgrade = 0;
                         if (pictureBox19.Visible == true)
@@ -642,7 +642,7 @@ namespace _4Story_Upgrading_Simulator
 
                         //label17.Text = show_numbers(bRand, bProb);
 
-                        if (bRand < bProb)
+                        if (bRand <= bProb)
                             result = true;
                         else
                             result = false;
@@ -671,7 +671,7 @@ namespace _4Story_Upgrading_Simulator
                     }
                     label17.Text = show_numbers(bRand, bProb);
 
-                    if (bRand < bProb)
+                    if (bRand <= bProb)
                         result = true;
                     else
                         result = false;
