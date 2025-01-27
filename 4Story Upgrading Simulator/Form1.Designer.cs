@@ -70,7 +70,6 @@
             label15 = new Label();
             label16 = new Label();
             label17 = new Label();
-            button1 = new Button();
             progressBar1 = new ProgressBar();
             label18 = new Label();
             label19 = new Label();
@@ -90,6 +89,8 @@
             pictureBox28 = new PictureBox();
             pictureBox29 = new PictureBox();
             label22 = new Label();
+            checkBox1 = new CheckBox();
+            pictureBox30 = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -121,6 +122,7 @@
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox28).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox29).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox30).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
@@ -656,18 +658,6 @@
             label17.Text = "label17";
             label17.Visible = false;
             // 
-            // button1
-            // 
-            button1.Cursor = Cursors.Hand;
-            button1.Location = new Point(10, 267);
-            button1.Margin = new Padding(3, 2, 3, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(131, 24);
-            button1.TabIndex = 42;
-            button1.Text = "Buy Moonstones";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
             // progressBar1
             // 
             progressBar1.Location = new Point(363, 224);
@@ -876,11 +866,36 @@
             label22.TabIndex = 55;
             label22.Text = "label22";
             // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(382, 313);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(116, 19);
+            checkBox1.TabIndex = 56;
+            checkBox1.Text = "Auto use potions";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            // 
+            // pictureBox30
+            // 
+            pictureBox30.BorderStyle = BorderStyle.FixedSingle;
+            pictureBox30.Cursor = Cursors.Hand;
+            pictureBox30.Image = (Image)resources.GetObject("pictureBox30.Image");
+            pictureBox30.Location = new Point(24, 267);
+            pictureBox30.Name = "pictureBox30";
+            pictureBox30.Size = new Size(125, 21);
+            pictureBox30.TabIndex = 57;
+            pictureBox30.TabStop = false;
+            pictureBox30.Click += pictureBox30_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(759, 357);
+            Controls.Add(pictureBox30);
+            Controls.Add(checkBox1);
             Controls.Add(label22);
             Controls.Add(pictureBox29);
             Controls.Add(label21);
@@ -895,7 +910,6 @@
             Controls.Add(pictureBox15);
             Controls.Add(pictureBox13);
             Controls.Add(progressBar1);
-            Controls.Add(button1);
             Controls.Add(label17);
             Controls.Add(label16);
             Controls.Add(label15);
@@ -976,6 +990,7 @@
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox28).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox29).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox30).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1023,7 +1038,6 @@
         private Label label15;
         private Label label16;
         private Label label17;
-        private Button button1;
         private ProgressBar progressBar1;
         private Label label18;
         private Label label19;
@@ -1043,5 +1057,7 @@
         private PictureBox pictureBox29;
         private Label label22;
         private ToolStripMenuItem editInventoryToolStripMenuItem;
+        private CheckBox checkBox1;
+        private PictureBox pictureBox30;
     }
 }

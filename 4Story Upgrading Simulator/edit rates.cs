@@ -232,15 +232,23 @@ namespace _4Story_Upgrading_Simulator
         // Add this method to handle text validation for all textboxes
         private void TextBox_KeyPress(object? sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
+            // Accetta sia punto che virgola come separatore decimale
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+                e.KeyChar != '.' && e.KeyChar != ',')
             {
                 e.Handled = true;
+                return;
             }
 
-            // Only allow one decimal point
-            if (sender is TextBox textBox && e.KeyChar == '.' && textBox.Text.Contains('.'))
+            if (sender is TextBox textBox)
             {
-                e.Handled = true;
+                // Controlla se c'è già un separatore decimale (punto o virgola)
+                if ((e.KeyChar == '.' || e.KeyChar == ',') &&
+                    (textBox.Text.Contains('.') || textBox.Text.Contains(',')))
+                {
+                    e.Handled = true;
+                    return;
+                }
             }
         }
 
@@ -249,17 +257,19 @@ namespace _4Story_Upgrading_Simulator
         {
             if (sender is TextBox textBox)
             {
-                if (float.TryParse(textBox.Text, out float value))
+                string normalizedText = textBox.Text.Replace(',', '.');
+                if (float.TryParse(normalizedText,
+                    System.Globalization.NumberStyles.Float,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out float value))
                 {
-                    // Ensure value is between 0 and 100
-                    if (value > 100)
-                        textBox.Text = "100";
-                    else if (value < 0)
-                        textBox.Text = "0";
+                    value = Math.Max(0, Math.Min(100, value));
+                    textBox.Text = value.ToString("F2",
+                        System.Globalization.CultureInfo.CurrentCulture);
                 }
                 else
                 {
-                    textBox.Text = "0";
+                    textBox.Text = "0,00";
                 }
             }
         }
