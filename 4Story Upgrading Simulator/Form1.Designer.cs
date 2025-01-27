@@ -91,6 +91,11 @@
             label22 = new Label();
             checkBox1 = new CheckBox();
             pictureBox30 = new PictureBox();
+            trackBar1 = new TrackBar();
+            volume = new Label();
+            SiVolume = new PictureBox();
+            noVolume = new PictureBox();
+            label23 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -123,6 +128,9 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox28).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox29).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox30).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)SiVolume).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)noVolume).BeginInit();
             SuspendLayout();
             // 
             // pictureBox1
@@ -889,11 +897,72 @@
             pictureBox30.TabStop = false;
             pictureBox30.Click += pictureBox30_Click;
             // 
+            // trackBar1
+            // 
+            trackBar1.Location = new Point(632, 315);
+            trackBar1.Maximum = 100;
+            trackBar1.Name = "trackBar1";
+            trackBar1.Size = new Size(127, 45);
+            trackBar1.TabIndex = 58;
+            trackBar1.TickStyle = TickStyle.None;
+            trackBar1.Value = 100;
+            trackBar1.Scroll += trackBar1_Scroll_1;
+            // 
+            // volume
+            // 
+            volume.AutoSize = true;
+            volume.Location = new Point(668, 336);
+            volume.Name = "volume";
+            volume.Size = new Size(35, 15);
+            volume.TabIndex = 59;
+            volume.Text = "100%";
+            // 
+            // SiVolume
+            // 
+            SiVolume.Cursor = Cursors.Hand;
+            SiVolume.Image = (Image)resources.GetObject("SiVolume.Image");
+            SiVolume.Location = new Point(605, 315);
+            SiVolume.Name = "SiVolume";
+            SiVolume.Size = new Size(25, 21);
+            SiVolume.SizeMode = PictureBoxSizeMode.StretchImage;
+            SiVolume.TabIndex = 60;
+            SiVolume.TabStop = false;
+            SiVolume.Click += SiVolume_Click_1;
+            // 
+            // noVolume
+            // 
+            noVolume.Cursor = Cursors.Hand;
+            noVolume.Image = (Image)resources.GetObject("noVolume.Image");
+            noVolume.Location = new Point(605, 315);
+            noVolume.Name = "noVolume";
+            noVolume.Size = new Size(25, 21);
+            noVolume.SizeMode = PictureBoxSizeMode.StretchImage;
+            noVolume.TabIndex = 61;
+            noVolume.TabStop = false;
+            noVolume.Click += noVolume_Click_1;
+            // 
+            // label23
+            // 
+            label23.AutoSize = true;
+            label23.BackColor = SystemColors.Control;
+            label23.FlatStyle = FlatStyle.Flat;
+            label23.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            label23.Location = new Point(428, 224);
+            label23.Name = "label23";
+            label23.Size = new Size(27, 15);
+            label23.TabIndex = 62;
+            label23.Text = "0 %";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(759, 357);
+            Controls.Add(label23);
+            Controls.Add(noVolume);
+            Controls.Add(SiVolume);
+            Controls.Add(volume);
+            Controls.Add(trackBar1);
             Controls.Add(pictureBox30);
             Controls.Add(checkBox1);
             Controls.Add(label22);
@@ -956,7 +1025,7 @@
             Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
             Name = "Form1";
-            Text = "4Story Upgrading Simulator v2.3";
+            Text = "4Story Upgrading Simulator v2.4";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
@@ -991,6 +1060,9 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox28).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox29).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox30).EndInit();
+            ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)SiVolume).EndInit();
+            ((System.ComponentModel.ISupportInitialize)noVolume).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1059,5 +1131,10 @@
         private ToolStripMenuItem editInventoryToolStripMenuItem;
         private CheckBox checkBox1;
         private PictureBox pictureBox30;
+        private TrackBar trackBar1;
+        private Label volume;
+        private PictureBox SiVolume;
+        private PictureBox noVolume;
+        private Label label23;
     }
 }

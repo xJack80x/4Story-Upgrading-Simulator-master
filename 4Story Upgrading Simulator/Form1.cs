@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic.Devices;
 using System;
 
 namespace _4Story_Upgrading_Simulator
@@ -46,19 +47,32 @@ namespace _4Story_Upgrading_Simulator
         private int pergamenaUsata = 0;
         private bool AutoPotions = false;
 
+        // Add these at the class level
+        private float soundVolume = 1.0f; // 0.0f to 1.0f
+        private float previousVolume = 1.0f;
+        private NAudio.Wave.WaveOutEvent outputDevice;
+        private NAudio.Wave.AudioFileReader audioFile;
+
+
+
         private static Form1? instance;
 
-        System.Media.SoundPlayer cash = new System.Media.SoundPlayer(Directory.GetCurrentDirectory() + @"\sounds\cash.wav");
-        System.Media.SoundPlayer loading = new System.Media.SoundPlayer(Directory.GetCurrentDirectory() + @"\sounds\loading.wav");
-        System.Media.SoundPlayer up = new System.Media.SoundPlayer(Directory.GetCurrentDirectory() + @"\sounds\up.wav");
-        System.Media.SoundPlayer fail = new System.Media.SoundPlayer(Directory.GetCurrentDirectory() + @"\sounds\fail.wav");
-        System.Media.SoundPlayer select = new System.Media.SoundPlayer(Directory.GetCurrentDirectory() + @"\sounds\select.wav");
 
         public Form1()
         {
             InitializeComponent();
             LoadInventory();
             instance = this;
+            //trackbar
+            trackBar1.Minimum = 0;
+            trackBar1.Maximum = 100;
+            trackBar1.Value = 100;  // Start at full volume
+            trackBar1.TickFrequency = 10;
+            trackBar1.SmallChange = 1;
+            trackBar1.LargeChange = 10;
+            trackBar1.Scroll += new EventHandler(trackBar1_Scroll);
+            noVolume.Visible = false;
+            label23.Visible = false;
             // Load saved rates at startup
             LoadSavedRatesForAllServers();
 
@@ -77,10 +91,11 @@ namespace _4Story_Upgrading_Simulator
                 aggiornaContatori(i);
 
         }
+    
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            
+
 
 
             if ((pictureBox16.Visible || pictureBox12.Visible) && keyData == Keys.Enter)
@@ -111,7 +126,49 @@ namespace _4Story_Upgrading_Simulator
         }
 
 
+        private void PlaySoundWithVolume(string soundPath, float volume)
+        {
+            try
+            {
+                // Clean up previous instances
+                if (outputDevice != null)
+                {
+                    outputDevice.Stop();
+                    outputDevice.Dispose();
+                    outputDevice = null;
+                }
+                if (audioFile != null)
+                {
+                    audioFile.Dispose();
+                    audioFile = null;
+                }
 
+                // Create new instances
+                outputDevice = new NAudio.Wave.WaveOutEvent();
+                audioFile = new NAudio.Wave.AudioFileReader(soundPath);
+
+                // Set volume before initializing
+                audioFile.Volume = volume;
+                outputDevice.Init(audioFile);
+                outputDevice.Play();
+            }
+            catch (Exception)
+            {
+                // Handle any potential errors silently
+            }
+        }
+
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+
+            soundVolume = trackBar1.Value / 100.0f;
+            if (audioFile != null)
+            {
+                audioFile.Volume = soundVolume;
+            }
+            volume.Text = trackBar1.Value + "%";
+        }
 
         private void LoadInventory()
         {
@@ -525,25 +582,24 @@ namespace _4Story_Upgrading_Simulator
         {
             try
             {
+                string soundPath = "";
                 switch (value)
                 {
                     case 0:
-                        if (File.Exists(Directory.GetCurrentDirectory() + @"\sounds\select.wav"))
-                            select.Play();
+                        soundPath = Directory.GetCurrentDirectory() + @"\sounds\select.wav";
                         break;
                     case 1:
-                        if (File.Exists(Directory.GetCurrentDirectory() + @"\sounds\loading.wav"))
-                            loading.Play();
+                        soundPath = Directory.GetCurrentDirectory() + @"\sounds\loading.wav";
                         break;
                     case 2:
-                        if (File.Exists(Directory.GetCurrentDirectory() + @"\sounds\up.wav"))
-                            up.Play();
+                        soundPath = Directory.GetCurrentDirectory() + @"\sounds\up.wav";
                         break;
                     case 3:
-                        if (File.Exists(Directory.GetCurrentDirectory() + @"\sounds\fail.wav"))
-                            fail.Play();
+                        soundPath = Directory.GetCurrentDirectory() + @"\sounds\fail.wav";
                         break;
                 }
+
+                PlaySoundWithVolume(soundPath, soundVolume);
 
             }
             catch (FileNotFoundException)
@@ -554,6 +610,7 @@ namespace _4Story_Upgrading_Simulator
         private async Task CountDown()
         {
             int timeToComplete = 100; //Time in seconds
+            label23.Visible = true;
             playSounds(1);
             progressBar1.Minimum = 0;
             progressBar1.Maximum = timeToComplete;
@@ -563,10 +620,11 @@ namespace _4Story_Upgrading_Simulator
             {
                 progressBar1.Value = i;
                 progressBar1.Value = i - 1;
+                label23.Text = $"{i}%";
                 await Task.Delay(1); // Replace Thread.Sleep with Task.Delay
             }
             progressBar1.Value = 100;
-
+            label23.Text = "100%";
             if (result)
             {
                 playSounds(2);
@@ -575,6 +633,8 @@ namespace _4Story_Upgrading_Simulator
             {
                 playSounds(3);
             }
+
+            label23.Visible = false;
         }
 
 
@@ -628,6 +688,7 @@ namespace _4Story_Upgrading_Simulator
         {
             pictureBox12.Visible = false;
             pictureBox13.Visible = false;
+            label23.Visible = false;
             ready = true;
         }
 
@@ -645,6 +706,7 @@ namespace _4Story_Upgrading_Simulator
         {
             pictureBox15.Visible = false;
             pictureBox16.Visible = false;
+            label23.Visible = false;
             ready = true;
         }
 
@@ -870,7 +932,7 @@ namespace _4Story_Upgrading_Simulator
                 {
                     if (File.Exists(Directory.GetCurrentDirectory() + @"\sounds\cash.wav"))
                     {
-                        this.Invoke(() => cash.Play());
+                        this.Invoke(() => PlaySoundWithVolume(Directory.GetCurrentDirectory() + @"\sounds\cash.wav", soundVolume));
                     }
                 }
                 catch (FileNotFoundException) { }
@@ -1389,7 +1451,7 @@ namespace _4Story_Upgrading_Simulator
                 {
                     if (File.Exists(Directory.GetCurrentDirectory() + @"\sounds\cash.wav"))
                     {
-                        this.Invoke(() => cash.Play());
+                        this.Invoke(() => PlaySoundWithVolume(Directory.GetCurrentDirectory() + @"\sounds\cash.wav", soundVolume));
                     }
                 }
                 catch (FileNotFoundException) { }
@@ -1415,5 +1477,40 @@ namespace _4Story_Upgrading_Simulator
                 });
             });
         }
+
+        private void trackBar1_Scroll_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void noVolume_Click_1(object sender, EventArgs e)
+        {
+            soundVolume = previousVolume;
+            trackBar1.Value = (int)(previousVolume * 100);
+            noVolume.Visible = false;
+            SiVolume.Visible = true;
+
+            if (audioFile != null)
+            {
+                audioFile.Volume = soundVolume;
+            }
+        }
+
+        private void SiVolume_Click_1(object sender, EventArgs e)
+        {
+            previousVolume = soundVolume;
+            soundVolume = 0;
+            trackBar1.Value = 0;
+            SiVolume.Visible = false;
+            noVolume.Visible = true;
+
+            if (audioFile != null)
+            {
+                audioFile.Volume = soundVolume;
+            }
+        }
+
+
+ 
     }
 }
