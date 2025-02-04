@@ -39,6 +39,26 @@ namespace _4Story_Upgrading_Simulator
             LoadRates();
         }
 
+        private string FormatNumberForDisplay(float value)
+        {
+            var currentCulture = System.Globalization.CultureInfo.CurrentCulture;
+            return value.ToString("F2", currentCulture);
+        }
+
+        private float ParseNumberFromString(string input)
+        {
+            // Replace any comma with dot for internal processing
+            string normalizedInput = input.Replace(',', '.');
+
+            if (float.TryParse(normalizedInput,
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out float result))
+            {
+                return result;
+            }
+            return 0.0f;
+        }
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
 
@@ -46,7 +66,7 @@ namespace _4Story_Upgrading_Simulator
 
         private void LoadRates()
         {
-            float[] rates;
+            float[] rates = savedRates.ContainsKey(serverType) ? savedRates[serverType] : GetDefaultRates();
             if (savedRates.ContainsKey(serverType))
             {
                 rates = savedRates[serverType];
@@ -55,30 +75,30 @@ namespace _4Story_Upgrading_Simulator
             {
                 rates = GetDefaultRates();
             }
-            textBox1.Text = rates[0].ToString();
-            textBox2.Text = rates[1].ToString();
-            textBox3.Text = rates[2].ToString();
-            textBox4.Text = rates[3].ToString();
-            textBox5.Text = rates[4].ToString();
-            textBox6.Text = rates[5].ToString();
-            textBox7.Text = rates[6].ToString();
-            textBox8.Text = rates[7].ToString();
-            textBox9.Text = rates[8].ToString();
-            textBox10.Text = rates[9].ToString();
-            textBox11.Text = rates[10].ToString();
-            textBox12.Text = rates[11].ToString();
-            textBox13.Text = rates[12].ToString();
-            textBox14.Text = rates[13].ToString();
-            textBox15.Text = rates[14].ToString();
-            textBox16.Text = rates[15].ToString();
-            textBox17.Text = rates[16].ToString();
-            textBox18.Text = rates[17].ToString();
-            textBox19.Text = rates[18].ToString();
-            textBox20.Text = rates[19].ToString();
-            textBox21.Text = rates[20].ToString();
-            textBox22.Text = rates[21].ToString();
-            textBox23.Text = rates[22].ToString();
-            textBox24.Text = rates[23].ToString();
+            textBox1.Text = FormatNumberForDisplay(rates[0]);
+            textBox2.Text = FormatNumberForDisplay(rates[1]);
+            textBox3.Text = FormatNumberForDisplay(rates[2]);
+            textBox4.Text = FormatNumberForDisplay(rates[3]);
+            textBox5.Text = FormatNumberForDisplay(rates[4]);
+            textBox6.Text = FormatNumberForDisplay(rates[5]);
+            textBox7.Text = FormatNumberForDisplay(rates[6]);
+            textBox8.Text = FormatNumberForDisplay(rates[7]);
+            textBox9.Text = FormatNumberForDisplay(rates[8]);
+            textBox10.Text = FormatNumberForDisplay(rates[9]);
+            textBox11.Text = FormatNumberForDisplay(rates[10]);
+            textBox12.Text = FormatNumberForDisplay(rates[11]);
+            textBox13.Text = FormatNumberForDisplay(rates[12]);
+            textBox14.Text = FormatNumberForDisplay(rates[13]);
+            textBox15.Text = FormatNumberForDisplay(rates[14]);
+            textBox16.Text = FormatNumberForDisplay(rates[15]);
+            textBox17.Text = FormatNumberForDisplay(rates[16]);
+            textBox18.Text = FormatNumberForDisplay(rates[17]);
+            textBox19.Text = FormatNumberForDisplay(rates[18]);
+            textBox20.Text = FormatNumberForDisplay(rates[19]);
+            textBox21.Text = FormatNumberForDisplay(rates[20]);
+            textBox22.Text = FormatNumberForDisplay(rates[21]);
+            textBox23.Text = FormatNumberForDisplay(rates[22]);
+            textBox24.Text = FormatNumberForDisplay(rates[23]);
         }
 
         private float[] GetDefaultRates()
@@ -305,7 +325,9 @@ namespace _4Story_Upgrading_Simulator
             foreach (var kvp in savedRates)
             {
                 string filePath = GetSaveFilePath(kvp.Key);
-                File.WriteAllLines(filePath, kvp.Value.Select(r => r.ToString()).ToArray());
+                // Save using invariant culture (dots)
+                var lines = kvp.Value.Select(r => r.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                File.WriteAllLines(filePath, lines.ToArray());
             }
         }
 
@@ -317,7 +339,13 @@ namespace _4Story_Upgrading_Simulator
                 if (File.Exists(filePath))
                 {
                     string[] lines = File.ReadAllLines(filePath);
-                    float[] rates = lines.Select(l => float.Parse(l)).ToArray();
+                    float[] rates = lines.Select(l =>
+                    {
+                        // Normalize the input by replacing comma with dot
+                        string normalizedValue = l.Replace(',', '.');
+                        return float.Parse(normalizedValue,
+                            System.Globalization.CultureInfo.InvariantCulture);
+                    }).ToArray();
                     savedRates[i] = rates;
                 }
             }

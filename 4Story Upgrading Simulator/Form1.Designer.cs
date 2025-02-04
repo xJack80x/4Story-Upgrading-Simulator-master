@@ -96,6 +96,7 @@
             SiVolume = new PictureBox();
             noVolume = new PictureBox();
             label23 = new Label();
+            checkBox2 = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -877,7 +878,7 @@
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(382, 313);
+            checkBox1.Location = new Point(325, 313);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(116, 19);
             checkBox1.TabIndex = 56;
@@ -911,7 +912,7 @@
             // volume
             // 
             volume.AutoSize = true;
-            volume.Location = new Point(668, 336);
+            volume.Location = new Point(677, 336);
             volume.Name = "volume";
             volume.Size = new Size(35, 15);
             volume.TabIndex = 59;
@@ -953,11 +954,23 @@
             label23.TabIndex = 62;
             label23.Text = "0 %";
             // 
+            // checkBox2
+            // 
+            checkBox2.AutoSize = true;
+            checkBox2.Location = new Point(478, 313);
+            checkBox2.Name = "checkBox2";
+            checkBox2.Size = new Size(91, 19);
+            checkBox2.TabIndex = 63;
+            checkBox2.Text = "Best potions";
+            checkBox2.UseVisualStyleBackColor = true;
+            checkBox2.CheckedChanged += checkBox2_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(759, 357);
+            Controls.Add(checkBox2);
             Controls.Add(label23);
             Controls.Add(noVolume);
             Controls.Add(SiVolume);
@@ -1025,7 +1038,7 @@
             Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
             Name = "Form1";
-            Text = "4Story Upgrading Simulator v2.4";
+            Text = "4Story Upgrading Simulator v2.5";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
@@ -1136,5 +1149,6 @@
         private PictureBox SiVolume;
         private PictureBox noVolume;
         private Label label23;
+        private CheckBox checkBox2;
     }
 }

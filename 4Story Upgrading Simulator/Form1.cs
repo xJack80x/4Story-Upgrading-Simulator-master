@@ -46,13 +46,14 @@ namespace _4Story_Upgrading_Simulator
         private int pozioneUsata = 1;
         private int pergamenaUsata = 0;
         private bool AutoPotions = false;
+        private bool bestPotion = true;
 
         // Add these at the class level
         private float soundVolume = 1.0f; // 0.0f to 1.0f
         private float previousVolume = 1.0f;
         private NAudio.Wave.WaveOutEvent outputDevice;
         private NAudio.Wave.AudioFileReader audioFile;
-
+        private bool isInitializing;
 
 
         private static Form1? instance;
@@ -60,22 +61,25 @@ namespace _4Story_Upgrading_Simulator
 
         public Form1()
         {
+            isInitializing = true;
             InitializeComponent();
             LoadInventory();
+            
             instance = this;
+            // Load saved rates at startup
+            LoadSavedSettings();
+
             //trackbar
             trackBar1.Minimum = 0;
             trackBar1.Maximum = 100;
-            trackBar1.Value = 100;  // Start at full volume
             trackBar1.TickFrequency = 10;
             trackBar1.SmallChange = 1;
             trackBar1.LargeChange = 10;
             trackBar1.Scroll += new EventHandler(trackBar1_Scroll);
-            noVolume.Visible = false;
-            label23.Visible = false;
-            // Load saved rates at startup
-            LoadSavedRatesForAllServers();
 
+         
+            LoadSavedRatesForAllServers();
+            label23.Visible = false;
             label15.Text = upgrade.ToString();
             label10.Text = tinture.ToString();
             label11.Text = pozionix100.ToString();
@@ -84,14 +88,17 @@ namespace _4Story_Upgrading_Simulator
             label13.Text = pozionix200.ToString();
             label21.Text = pozionix300.ToString();
             label14.Text = riflessioni.ToString();
-            label7.Text = "Money spent: " + soldi + " euros"; label7.Update();
+            label7.Text = "Money spent: " + soldi + " euros"; 
+            label7.Update();
             label20.Text = "Server: " + getServerTitle(version);
 
             for (int i = 0; i <= 6; i++)
                 aggiornaContatori(i);
 
+
+            isInitializing = false;
         }
-    
+
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -168,6 +175,7 @@ namespace _4Story_Upgrading_Simulator
                 audioFile.Volume = soundVolume;
             }
             volume.Text = trackBar1.Value + "%";
+            SaveCurrentSettings(4); 
         }
 
         private void LoadInventory()
@@ -281,6 +289,8 @@ namespace _4Story_Upgrading_Simulator
                     }
                 }
             }
+
+            UpdateSuccessChanceDisplay();
         }
 
         private string upgrading(int pozione, int pergamena, int up, int bRand, float bProb)
@@ -422,6 +432,7 @@ namespace _4Story_Upgrading_Simulator
 
             label18.Text = "+" + verga.ToString();
             label19.Text = "+" + balestra.ToString();
+            UpdateSuccessChanceDisplay();
             return risultato;
         }
 
@@ -494,25 +505,30 @@ namespace _4Story_Upgrading_Simulator
             return "Random number: " + bRand + "  Chance: " + bProb + "%";
         }
 
+        private void UpdateSuccessChanceDisplay()
+        {
+            if (pictureBox20.Visible == false)  // If reflection scroll is not selected
+            {
+                float currentProb;
+                switch (version)
+                {
+                    case 0: currentProb = CalcProb(check_prob(upgrade), pozioneUsata); break;
+                    case 1: currentProb = CalcProb(check_prob_ancient(upgrade), pozioneUsata); break;
+                    case 2: currentProb = CalcProb(check_prob_official(upgrade), pozioneUsata); break;
+                    case 3: currentProb = CalcProb(check_prob_custom(upgrade), pozioneUsata); break;
+                    default: currentProb = 0; break;
+                }
+
+                label16.Visible = true;
+                label16.Text = "Next success chance: " + currentProb.ToString("F2") + "%";
+                label16.Update();
+            }
+        }
+
         private string show_success_chance()
         {
-            label16.Visible = true;
-
-            // If upgrade is 0, return 100% success rate
-            if (upgrade == 0)
-            {
-                return "Next success chance: 100.00%";
-            }
-
-            // Show current level's success rate instead of next level
-            switch (version)
-            {
-                case 0: return "Next success chance: " + CalcProb(check_prob(upgrade), pozioneUsata).ToString("F2") + "%";
-                case 1: return "Next Success chance: " + CalcProb(check_prob_ancient(upgrade), pozioneUsata).ToString("F2") + "%";
-                case 2: return "Next Success chance: " + CalcProb(check_prob_official(upgrade), pozioneUsata).ToString("F2") + "%";
-                case 3: return "Next Success chance: " + CalcProb(check_prob_custom(upgrade), pozioneUsata).ToString("F2") + "%";
-                default: return "";
-            }
+            UpdateSuccessChanceDisplay();
+            return label16.Text;
 
         }
 
@@ -611,6 +627,9 @@ namespace _4Story_Upgrading_Simulator
         {
             int timeToComplete = 100; //Time in seconds
             label23.Visible = true;
+            label23.BackColor = ProgressBar.DefaultBackColor;
+            label23.ForeColor = Color.Black;
+            bool backActivated = false;
             playSounds(1);
             progressBar1.Minimum = 0;
             progressBar1.Maximum = timeToComplete;
@@ -618,10 +637,21 @@ namespace _4Story_Upgrading_Simulator
 
             for (int i = 1; i <= timeToComplete; i++)
             {
+
                 progressBar1.Value = i;
                 progressBar1.Value = i - 1;
+                if (backActivated == false)
+                {
+                    if (i >= 40)
+                    {
+                        label23.BackColor = Color.FromArgb(0, 192, 0);
+                        label23.ForeColor = Color.Black;
+                        backActivated = true;
+                    }
+                }
                 label23.Text = $"{i}%";
                 await Task.Delay(1); // Replace Thread.Sleep with Task.Delay
+
             }
             progressBar1.Value = 100;
             label23.Text = "100%";
@@ -651,7 +681,7 @@ namespace _4Story_Upgrading_Simulator
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            EnsureItemVisibility();
         }
 
         private void pictureBox21_Click(object sender, EventArgs e)
@@ -710,6 +740,81 @@ namespace _4Story_Upgrading_Simulator
             ready = true;
         }
 
+        private void SelectPotion()
+        {
+            if (bestPotion == true)
+            {
+                // Existing logic - best to worst
+                if (pozionix300 > 0)
+                {
+                    pozioneUsata = POZIONE_FELICITA_X300;
+                    pictureBox29.Visible = true;
+                    pictureBox22.Visible = false;
+                    pictureBox23.Visible = false;
+                    pictureBox24.Visible = false;
+                }
+                else if (pozionix200 > 0)
+                {
+                    pozioneUsata = POZIONE_FELICITA_X200;
+                    pictureBox24.Visible = true;
+                    pictureBox22.Visible = false;
+                    pictureBox23.Visible = false;
+                    pictureBox29.Visible = false;
+                }
+                else if (pozionix150 > 0)
+                {
+                    pozioneUsata = POZIONE_FELICITA_X150;
+                    pictureBox23.Visible = true;
+                    pictureBox22.Visible = false;
+                    pictureBox24.Visible = false;
+                    pictureBox29.Visible = false;
+                }
+                else if (pozionix100 > 0)
+                {
+                    pozioneUsata = POZIONE_FELICITA_X100;
+                    pictureBox22.Visible = true;
+                    pictureBox23.Visible = false;
+                    pictureBox24.Visible = false;
+                    pictureBox29.Visible = false;
+                }
+            }
+            else
+            {
+                // Reverse logic - worst to best
+                if (pozionix100 > 0)
+                {
+                    pozioneUsata = POZIONE_FELICITA_X100;
+                    pictureBox22.Visible = true;
+                    pictureBox23.Visible = false;
+                    pictureBox24.Visible = false;
+                    pictureBox29.Visible = false;
+                }
+                else if (pozionix150 > 0)
+                {
+                    pozioneUsata = POZIONE_FELICITA_X150;
+                    pictureBox23.Visible = true;
+                    pictureBox22.Visible = false;
+                    pictureBox24.Visible = false;
+                    pictureBox29.Visible = false;
+                }
+                else if (pozionix200 > 0)
+                {
+                    pozioneUsata = POZIONE_FELICITA_X200;
+                    pictureBox24.Visible = true;
+                    pictureBox22.Visible = false;
+                    pictureBox23.Visible = false;
+                    pictureBox29.Visible = false;
+                }
+                else if (pozionix300 > 0)
+                {
+                    pozioneUsata = POZIONE_FELICITA_X300;
+                    pictureBox29.Visible = true;
+                    pictureBox22.Visible = false;
+                    pictureBox23.Visible = false;
+                    pictureBox24.Visible = false;
+                }
+            }
+        }
         private bool CheckAndSelectBestPotion()
         {
             if (pergamenaUsata == PERGAMENA_RIFLESSIONE_VAL)
@@ -722,41 +827,12 @@ namespace _4Story_Upgrading_Simulator
                 return false;
             }
 
-
-            if (pozionix300 > 0)
+            if (pozioneUsata == 1)
             {
-                pozioneUsata = POZIONE_FELICITA_X300;
-                pictureBox29.Visible = true;
-                pictureBox22.Visible = false;
-                pictureBox23.Visible = false;
-                pictureBox24.Visible = false;
-            }
-            else if (pozionix200 > 0)
-            {
-                pozioneUsata = POZIONE_FELICITA_X200;
-                pictureBox24.Visible = true;
-                pictureBox22.Visible = false;
-                pictureBox23.Visible = false;
-                pictureBox29.Visible = false;
-            }
-            else if (pozionix150 > 0)
-            {
-                pozioneUsata = POZIONE_FELICITA_X150;
-                pictureBox23.Visible = true;
-                pictureBox22.Visible = false;
-                pictureBox24.Visible = false;
-                pictureBox29.Visible = false;
-            }
-            else if (pozionix100 > 0)
-            {
-                pozioneUsata = POZIONE_FELICITA_X100;
-                pictureBox22.Visible = true;
-                pictureBox23.Visible = false;
-                pictureBox24.Visible = false;
-                pictureBox29.Visible = false;
+                SelectPotion();
             }
 
-
+            // Only apply tinture if not already applied
             if (tinture > 0 && !tintura)
             {
                 tinture--;
@@ -766,15 +842,14 @@ namespace _4Story_Upgrading_Simulator
                 aggiornaContatori(1);
                 label10.Text = tinture.ToString();
             }
-            else
+
+            // Only set pergamena if not already set
+            if (pergamenaUsata == 0)
             {
-
+                pergamenaUsata = PERGAMENA_MAESTRO_VAL;
+                pictureBox18.Visible = true;
+                pictureBox20.Visible = false;
             }
-
-            pergamenaUsata = PERGAMENA_MAESTRO_VAL;
-            pictureBox18.Visible = true;
-            pictureBox20.Visible = false;
-
 
             if (pictureBox20.Visible == false)
             {
@@ -784,6 +859,19 @@ namespace _4Story_Upgrading_Simulator
             }
 
             return true;
+        }
+
+
+        private void EnsureItemVisibility()
+        {
+            // Always keep base item pictures visible
+            pictureBox6.Visible = true;  // Tinture
+            pictureBox4.Visible = true;  // Potion x100
+            pictureBox5.Visible = true;  // Potion x150
+            pictureBox7.Visible = true;  // Potion x200
+            pictureBox28.Visible = true; // Potion x300
+            pictureBox9.Visible = true;  // Master scroll
+            pictureBox8.Visible = true;  // Reflection scroll
         }
 
 
@@ -915,6 +1003,7 @@ namespace _4Story_Upgrading_Simulator
                     }
                 }
             }
+            EnsureItemVisibility();
         }
 
         private void pictureBox17_Click(object sender, EventArgs e)
@@ -1144,6 +1233,7 @@ namespace _4Story_Upgrading_Simulator
                     label17.Visible = false;
                     pergamenaUsata = PERGAMENA_MAESTRO_VAL;
                     label16.Text = show_success_chance();
+                    UpdateSuccessChanceDisplay();
                 }
             }
         }
@@ -1161,6 +1251,7 @@ namespace _4Story_Upgrading_Simulator
                     pergamenaUsata = PERGAMENA_MAESTRO_VAL;
                     label16.Visible = true;
                     label16.Text = show_success_chance();
+                    UpdateSuccessChanceDisplay();
                 }
             }
         }
@@ -1203,6 +1294,7 @@ namespace _4Story_Upgrading_Simulator
                 pictureBox19.Visible = true;
                 pictureBox17.Visible = false;
                 upgrade = balestra;
+                UpdateSuccessChanceDisplay();
             }
         }
 
@@ -1223,6 +1315,7 @@ namespace _4Story_Upgrading_Simulator
                 pictureBox17.Visible = true;
                 pictureBox19.Visible = false;
                 upgrade = verga;
+                UpdateSuccessChanceDisplay();
             }
         }
 
@@ -1233,6 +1326,7 @@ namespace _4Story_Upgrading_Simulator
                 pictureBox19.Visible = true;
                 pictureBox17.Visible = false;
                 upgrade = balestra;
+                UpdateSuccessChanceDisplay();
             }
         }
 
@@ -1243,6 +1337,7 @@ namespace _4Story_Upgrading_Simulator
                 pictureBox17.Visible = true;
                 pictureBox19.Visible = false;
                 upgrade = verga;
+                UpdateSuccessChanceDisplay();
             }
         }
 
@@ -1301,6 +1396,7 @@ namespace _4Story_Upgrading_Simulator
             pictureBox23.Visible = false;
             pictureBox24.Visible = false;
             pictureBox29.Visible = false;
+            EnsureItemVisibility();
             label9.Visible = false;
             UpdateInventoryAfterChange();
             label7.Text = "Money spent: 0 euros";
@@ -1436,10 +1532,11 @@ namespace _4Story_Upgrading_Simulator
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
-                AutoPotions = true;
-            else
-                AutoPotions = false;
+            AutoPotions = checkBox1.Checked;
+            if (!isInitializing)
+            {
+                SaveCurrentSettings(5);
+            }
         }
 
         private async void pictureBox30_Click(object sender, EventArgs e)
@@ -1485,32 +1582,83 @@ namespace _4Story_Upgrading_Simulator
 
         private void noVolume_Click_1(object sender, EventArgs e)
         {
-            soundVolume = previousVolume;
-            trackBar1.Value = (int)(previousVolume * 100);
+            previousVolume = soundVolume;
+            soundVolume = trackBar1.Value / 100.0f;
             noVolume.Visible = false;
             SiVolume.Visible = true;
-
             if (audioFile != null)
             {
                 audioFile.Volume = soundVolume;
             }
+            SaveCurrentSettings(3);
         }
 
         private void SiVolume_Click_1(object sender, EventArgs e)
         {
             previousVolume = soundVolume;
             soundVolume = 0;
-            trackBar1.Value = 0;
             SiVolume.Visible = false;
             noVolume.Visible = true;
-
             if (audioFile != null)
             {
                 audioFile.Volume = soundVolume;
             }
+            SaveCurrentSettings(2);
         }
 
 
- 
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            bestPotion = checkBox2.Checked;
+            if (!isInitializing)
+            {
+                SaveCurrentSettings(1);
+            }
+        }
+
+        private void SaveCurrentSettings(int val)
+        {
+            var settings = new Settings
+            {
+                AutoPotions = AutoPotions,
+                BestPotion = bestPotion,
+                NoVolume = noVolume.Visible,
+                SiVolume = SiVolume.Visible,
+                TrackBarValue = trackBar1.Value,
+                SoundVolume = soundVolume
+            };
+
+            SettingsManager.SaveSettings(settings);
+        }
+
+        private void LoadSavedSettings()
+        {
+            var settings = SettingsManager.LoadSettings();
+
+            bestPotion = settings.BestPotion;
+            checkBox1.Checked = settings.AutoPotions;
+            checkBox2.Checked = settings.BestPotion;
+
+            // Set volume controls
+            trackBar1.Value = settings.TrackBarValue;
+            soundVolume = settings.SoundVolume;
+            previousVolume = settings.SoundVolume;
+
+            // Set correct volume button visibility
+            if (soundVolume == 0)
+            {
+                noVolume.Visible = true;
+                SiVolume.Visible = false;
+            }
+            else
+            {
+                noVolume.Visible = false;
+                SiVolume.Visible = true;
+            }
+
+            volume.Text = trackBar1.Value + "%";
+        }
+
+
     }
 }
