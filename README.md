@@ -1,21 +1,48 @@
 # 4Story-Upgrading-Simulator-master
 
-A simulator for 4Ancient, 4Classic, and the old 4Story Official featuring official algorithms from the 4Story source code.
+Core Features:
+Real-time success chance calculation
+Random number generator visualization
+Dynamic upgrade success system based on probability comparison
 
-Features:
-- Real-time success chance calculation
-- Random number generator visualization
-- Upgrade success determined by comparing random number against success percentage
-- Complete inventory system including:
-- Tinctures
-- Potions (x1, x1.5, x2, x3)
-- Reflections
-- Master Formulas
+Inventory Management:
+Complete item tracking system including:
+Tinctures
+Potions (x1, x1.5, x2, x3)
+Reflections
+Master Formulas
+Customizable inventory quantities (0-9999)
+Persistent storage system
 
-New Features:
-- Edit Rates: Customize success rates for each server type
-- Edit Inventory: Modify item quantities (0-9999) with persistent storage
-- Auto-save system for both rates and inventory
+Server Configuration:
+Customizable success rates per server
+Culture-aware decimal separator handling
+Auto-save system for rates and inventory
+
+Quality of Life Features:
+Auto-use potions functionality
+Best Potion toggle (automatically selects highest/lowest level potion)
+Enter key support for message closing and upgrade initiation
+Visual upgrade chance updates when switching weapons
+
+Audio System:
+Volume control slider
+Mute toggle functionality
+Volume state persistence
+TrackBar position memory during mute/unmute
+
+Settings Management:
+Persistent settings storage via settings.txt
+Automatic save/load for:
+Audio preferences
+Auto potions state
+Best potion selection
+Optimized initialization sequence
+
+Visual Elements:
+Progress bar percentage display
+Improved button behaviors
+Enhanced counter visualizations
 
 The "Buy Moonstones" button replenishes supplies based on 4Classic prices, helping track potential upgrade costs.
 
